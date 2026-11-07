@@ -1,0 +1,152 @@
+/* css/theme.css - Chunk Lab Design Tokens & Base Element Styles */
+
+:root {
+  /* Brand and lesson colors */
+  --red: #EF3837;        /* brand: buttons, keyword boxes, progress */
+  --red-dark: #CF2524;   /* hover, pressed */
+  --red-tint: #FDECEC;   /* chunk tint A, soft panels */
+  --ink: #000000;        /* headings, body text */
+  --ink-2: #333333;      /* secondary text */
+  --dark: #222222;       /* code panels, slides background, footer */
+  --gray: #EAE5E5;       /* chunk tint B, accordion rows */
+  --soft: #F7F9FB;       /* page sections */
+  --white: #FFFFFF;
+  --ok: #1E7F3C;         /* pass text and icon */
+  --ok-tint: #E6F4EA;
+  --radius: 5px;
+  --font: "Figtree", system-ui, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Assessment console */
+  --paper: #DAD6CF;      /* page background */
+  --paper-2: #E4E0D9;    /* left panel, quiet cards */
+  --card: #F4F1EC;       /* reading surfaces and widget cards */
+  --line: #1A1A1A;       /* 2px outlines, step boxes, rail */
+  --shadow-hard: 3px 3px 0 #1A1A1A;
+  --blue: #2D5FC4;       /* status: done */
+  --orange: #D9822B;     /* status: marked for later */
+  --amber-line: #D4A23A; /* dashed callout border */
+  --amber-tint: #E6DCCB; /* dashed callout background */
+  --purple: #6B5B8E;     /* primary navigation buttons (Next, Previous) */
+  --good-chip: #CFE3D0;  /* "+1 correct" chip, text --ok */
+  --bad-chip: #EBC8C8;   /* "+0" wrong-answer chip, text --red-dark */
+}
+
+/* Base reset and box model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-size: 2.75rem; /* ~44px */
+}
+
+h2 {
+  font-size: 1.75rem; /* ~28px */
+}
+
+h3 {
+  font-size: 1.35rem;
+}
+
+h4 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+  color: var(--red);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--red-dark);
+}
+
+/* Code and preformatted blocks */
+code, kbd, samp, pre {
+  font-family: var(--mono);
+}
+
+code {
+  background-color: var(--paper-2);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+}
+
+/* Code inside a dark block keeps the block's colours, not the inline-code chip. */
+pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+pre {
+  background-color: var(--dark);
+  color: var(--white);
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Focus visibility for accessibility */
+:focus-visible {
+  outline: 2px solid var(--line);
+  outline-offset: 2px;
+}
+
+/* Signature Pattern: Key word box */
+.kw {
+  background-color: var(--red);
+  color: var(--white);
+  padding: 0.05em 0.35em;
+  border-radius: var(--radius);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Form controls reset */
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chunk Lab · Text Chunking for RAG</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23EF3837'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/widgets.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" defer></script>
+
+  <script src="js/namespace.js" defer></script>
+  <script src="js/py-runner.js" defer></script>
+  <script src="js/widgets/fixed-chunks.js" defer></script>
+  <script src="js/widgets/recursive-tree.js" defer></script>
+  <script src="js/widgets/rescue-game.js" defer></script>
+  <script src="js/clean-doc.js" defer></script>
+  <script src="js/quiz.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <header class="slides-header" role="banner" aria-label="Slides presentation header">
+    <div class="slides-header-container">
+      <div class="brand-link">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-title">Chunk Lab</span>
+      </div>
+      <div class="mode-toggle-group" role="group" aria-label="Lesson view mode switch">
+        <button type="button" class="mode-toggle-btn" data-mode-btn="lesson" aria-pressed="false">
+          Lesson
+        </button>
+        <button type="button" class="mode-toggle-btn active" data-mode-btn="slides" aria-pressed="true">
+          Slides
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="console-layout">
+
+    <aside class="console-left-panel" aria-label="Lesson overview">
+      <div class="left-panel-content">
+        <div class="left-panel-header">
+          <a href="#s1" class="brand-link" aria-label="Chunk Lab home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-title">Chunk Lab</span>
+          </a>
+          <div class="mode-toggle-group mobile-mode-toggle" role="group" aria-label="Lesson view mode switch">
+            <button type="button" class="mode-toggle-btn active" data-mode-btn="lesson" aria-pressed="true">
+              Lesson
+            </button>
+            <button type="button" class="mode-toggle-btn" data-mode-btn="slides" aria-pressed="false">
+              Slides
+            </button>
+          </div>
+        </div>
+
+        <div class="test-meta-card">
+          <div class="meta-card-title">Text Chunking and Document Processing for RAG</div>
+          <div class="meta-grid">
+            <div class="meta-grid-item">
+              <div class="meta-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <div class="meta-item-text">
+                <div class="meta-item-label">Format</div>
+                <div class="meta-item-val">Self-paced</div>
+              </div>
+            </div>
+            <div class="meta-grid-item">
+              <div class="meta-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="meta-item-text">
+                <div class="meta-item-label">Duration</div>
+                <div class="meta-item-val">45 min</div>
+              </div>
+            </div>
+            <div class="meta-grid-item">
+              <div class="meta-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="6" x2="20" y2="6"></line>
+                  <line x1="4" y1="12" x2="20" y2="12"></line>
+                  <line x1="4" y1="18" x2="20" y2="18"></line>
+                </svg>
+              </div>
+              <div class="meta-item-text">
+                <div class="meta-item-label">Sections</div>
+                <div class="meta-item-val">7</div>
+              </div>
+            </div>
+            <div class="meta-grid-item">
+              <div class="meta-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+              </div>
+              <div class="meta-item-text">
+                <div class="meta-item-label">Activities</div>
+                <div class="meta-item-val">3 + quiz</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-panel-controls">
+          <div class="mode-toggle-group" role="group" aria-label="Lesson view mode switch">
+            <button type="button" class="mode-toggle-btn active" data-mode-btn="lesson" aria-pressed="true">
+              Lesson
+            </button>
+            <button type="button" class="mode-toggle-btn" data-mode-btn="slides" aria-pressed="false">
+              Slides
+            </button>
+          </div>
+          <div class="time-remaining" aria-live="polite">about 45 min left</div>
+        </div>
+      </div>
+
+      <div class="left-panel-footer">
+        <p>Built by V. Srinivasulu Reddy for the Kalvium Instructional Designer (AI Courses) task.</p>
+      </div>
+    </aside>
+
+    <nav class="console-rail" aria-label="Lesson steps">
+      <ol class="rail-steps">
+        <li>
+          <a href="#s1" class="rail-box current" data-step="s1" aria-label="Section 1, Why chunk at all, current step">
+            <span class="step-box-num">1</span>
+            <span class="rail-tooltip" role="tooltip">Why chunk at all</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s2" class="rail-box" data-step="s2" aria-label="Section 2, Cleaning the document, not started">
+            <span class="step-box-num">2</span>
+            <span class="rail-tooltip" role="tooltip">Cleaning the document</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s3" class="rail-box" data-step="s3" aria-label="Section 3, Fixed-size chunks, not started">
+            <span class="step-box-num">3</span>
+            <span class="rail-tooltip" role="tooltip">Fixed-size chunks</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s4" class="rail-box" data-step="s4" aria-label="Section 4, Smarter splits, not started">
+            <span class="step-box-num">4</span>
+            <span class="rail-tooltip" role="tooltip">Smarter splits</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s5" class="rail-box" data-step="s5" aria-label="Section 5, Game: Rescue the Answer, not started">
+            <span class="step-box-num">5</span>
+            <span class="rail-tooltip" role="tooltip">Rescue the Answer</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s6" class="rail-box" data-step="s6" aria-label="Section 6, Chunking in real apps, not started">
+            <span class="step-box-num">6</span>
+            <span class="rail-tooltip" role="tooltip">Chunking in real apps</span>
+          </a>
+        </li>
+        <li>
+          <a href="#s7" class="rail-box" data-step="s7" aria-label="Section 7, Knowledge check, not started">
+            <span class="step-box-num">7</span>
+            <span class="rail-tooltip" role="tooltip">Knowledge check</span>
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <main class="console-content" id="lesson-content">
+
+      <div id="global-alert-container"></div>
+
+      <section class="before-section" id="before-start" aria-label="Before you start">
+        <div class="container">
+          <div class="before-header">
+            <h1 class="before-title">Before you <span class="kw">start</span></h1>
+            <p class="before-subtitle">
+              Master the art and science of document chunking for Retrieval-Augmented Generation (RAG). Learn how to clean messy files, pick structure-aware splitters, and rescue truncated answers.
+            </p>
+          </div>
+
+          <div class="objectives-card">
+            <h3>What you will be able to do</h3>
+            <div class="objectives-grid">
+              <div class="objective-item">
+                <span class="objective-num">1</span>
+                <div>Explain why documents must be cut into chunks before retrieval (context limits, retrieval precision, cost).</div>
+              </div>
+              <div class="objective-item">
+                <span class="objective-num">2</span>
+                <div>Clean extracted PDF text (page headers, footers, hyphenated line wraps, extra spaces) and explain why it matters.</div>
+              </div>
+              <div class="objective-item">
+                <span class="objective-num">3</span>
+                <div>Implement fixed-size chunking with overlap and predict how size and overlap reshape the chunks.</div>
+              </div>
+              <div class="objective-item">
+                <span class="objective-num">4</span>
+                <div>Compare fixed, sentence, and recursive splitting, and inspect a recursive splitter's call tree.</div>
+              </div>
+              <div class="objective-item">
+                <span class="objective-num">5</span>
+                <div>Tune chunking settings so keyword retrieval returns complete answers within a strict word budget.</div>
+              </div>
+              <div class="objective-item">
+                <span class="objective-num">6</span>
+                <div>Select sensible starting settings for real-world support, legal, and code documents, and measure accuracy.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout-amber activity-loop-callout">
+            <h3 class="callout-amber-title">How each activity works</h3>
+            <div class="activity-loop-grid">
+              <div class="loop-step">
+                <span class="loop-step-badge">1</span>
+                <div class="loop-step-content">
+                  <strong>Predict</strong>
+                  <p>Commit to a hypothesis about what will happen before you inspect or run any code.</p>
+                </div>
+              </div>
+              <div class="loop-step">
+                <span class="loop-step-badge">2</span>
+                <div class="loop-step-content">
+                  <strong>Play</strong>
+                  <p>Move sliders, toggle cleaning filters, and inspect the resulting chunks live in real time.</p>
+                </div>
+              </div>
+              <div class="loop-step">
+                <span class="loop-step-badge">3</span>
+                <div class="loop-step-content">
+                  <strong>Peek</strong>
+                  <p>Inspect the underlying Python standard library code executing in the Pyodide Web Worker.</p>
+                </div>
+              </div>
+              <div class="loop-step">
+                <span class="loop-step-badge">4</span>
+                <div class="loop-step-content">
+                  <strong>Prove</strong>
+                  <p>Verify your understanding with target retrieval challenges to unlock section completion.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="legend-card">
+            <h3 class="legend-heading">Section status symbols</h3>
+            <div class="legend-grid">
+              <div class="legend-item">
+                <span class="legend-symbol symbol-unstarted" aria-hidden="true"></span>
+                <span class="legend-text"><strong>Not started:</strong> outlined square</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-symbol symbol-done" aria-hidden="true"></span>
+                <span class="legend-text"><strong>Completed:</strong> blue filled circle</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-symbol symbol-marked" aria-hidden="true"></span>
+                <span class="legend-text"><strong>Marked for later:</strong> orange pentagon</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-symbol symbol-marked-done" aria-hidden="true"></span>
+                <span class="legend-text"><strong>Marked &amp; completed:</strong> orange pentagon with blue dot</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chips-explainer-card">
+            <h3 class="chips-heading">Knowledge check scoring</h3>
+            <div class="chips-explainer-list">
+              <div class="chip-explainer-row">
+                <span class="score-chip good">+1</span>
+                <span><em>Earned for each correct answer in the knowledge check.</em></span>
+              </div>
+              <div class="chip-explainer-row">
+                <span class="score-chip bad">+0</span>
+                <span><em>Shown for a wrong answer. Each question has one try, so read the explanation to see why.</em></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="before-start-action">
+            <a href="#s1" class="btn btn-purple hero-cta" id="btn-start-lesson">Start the lesson →</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s1" data-minutes="4" data-title="Why chunk at all">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">1. Why chunk at <span class="kw">all</span></h2>
+            <span class="section-badge">4 min</span>
+          </div>
+
+          <p>
+            Say you are building a help-desk bot for an online store. A customer asks: <em>"How long do I have to return a damaged item?"</em>
+          </p>
+          <p>
+            The answer is somewhere in the store's help manual, and the manual is thousands of words long. So why not paste the whole manual into the prompt? Every model has a limit on how much it can read at once. Even when that limit is large, a long prompt costs more, takes longer, and hides the one sentence you need among hundreds you don't. The fix is to cut the manual into small pieces, called chunks, and send only the few that matter. Below, the reading window is made tiny on purpose so you can see what happens when the text doesn't fit:
+          </p>
+
+          <div class="demo-grid">
+            <div class="demo-card">
+              <div class="demo-card-title">
+                <span>What the model can read at once (small window for demo)</span>
+                <span class="status-badge fail">⚠️ Overflow</span>
+              </div>
+              <div class="context-window-box">
+                <div class="context-visible">
+                  <strong>Shipping Policy</strong><br>
+                  Orders ship within two business days from our warehouse in Coimbatore... Delivery takes three to five days.<br><br>
+                  <strong>Returns Policy (General)</strong><br>
+                  Unused items can be returned within 30 days of delivery in their original packaging...
+                </div>
+                <div class="context-overflow">
+                  <span class="tag-dropped">Dropped · Model cannot read past here</span>
+                  <p style="margin: 4px 0 0; color: var(--ink-2); font-size: 0.82rem;">
+                    ...Damaged items can be returned within 60 days if you upload a photo of the damage...
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-title">
+                <span>Help-Desk Bot Response</span>
+                <span class="status-badge fail">❌ Wrong answer</span>
+              </div>
+              <div class="chat-bubble-user">
+                <div class="chat-author">User Question</div>
+                <div>How long do I have to return a damaged item?</div>
+              </div>
+              <div class="chat-bubble-bot">
+                <div class="chat-author">Bot Answer</div>
+                <div>You can return items within 30 days of delivery in original packaging.</div>
+              </div>
+              <p style="font-size: 0.88rem; color: var(--ink-2); margin-bottom: 0;">
+                <strong>Why it failed:</strong> Because the document exceeded the demo reading window, the specific rule for damaged items was dropped. The bot guessed from the general 30-day policy instead.
+              </p>
+            </div>
+          </div>
+
+          <div class="cards-row">
+            <div class="card-red">
+              <h4>1. Context Limits</h4>
+              <p>Every model can read only so much at once. Anything past the limit is simply lost.</p>
+            </div>
+            <div class="card-red">
+              <h4>2. Retrieval Precision</h4>
+              <p>One answer hidden in a long prompt is easy to miss. A few chunks that match the question keep the model on the right sentence.</p>
+            </div>
+            <div class="card-red">
+              <h4>3. Cost &amp; Speed</h4>
+              <p>You pay for every word you send, and long prompts are slower. Small chunks keep each question cheap and quick.</p>
+            </div>
+          </div>
+
+          <div class="question-block callout-amber" id="s1-predict-block">
+            <div class="question-prompt">
+              <strong>Predict:</strong> If you cut the document into tiny pieces of 10 words each, will retrieval work better?
+            </div>
+            <div class="choices-row" role="radiogroup" aria-label="Section 1 prediction options">
+              <button type="button" class="choice-btn" data-s1-choice="yes">
+                Yes: smaller chunks are always more precise
+              </button>
+              <button type="button" class="choice-btn" data-s1-choice="no">
+                No: pieces that small lose necessary context
+              </button>
+            </div>
+            <div id="s1-predict-feedback" class="feedback-alert" role="alert" aria-live="polite"></div>
+          </div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s1" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s2">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s2" data-minutes="5" data-title="Cleaning the document">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">2. Cleaning the <span class="kw">document</span></h2>
+            <span class="section-badge">5 min</span>
+          </div>
+
+          <p>
+            Before you split a document, clean it. Text copied out of PDFs and scans carries junk: the same header and footer on every page, words broken across lines with a hyphen, and extra spaces. If you chunk the junk, it ends up inside your chunks and gets in the way of search.
+          </p>
+          <p>
+            Turn on the three cleaning steps below, one at a time. Watch the raw help-centre text change and the word count drop. The Python beside it shows the regular expression behind each step.
+          </p>
+
+          <div id="clean-doc-mount"></div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s2" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s1">← Previous</button>
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s3">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s3" data-minutes="8" data-title="Fixed-size chunks">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">3. Fixed-size <span class="kw">chunks</span></h2>
+            <span class="section-badge">8 min</span>
+          </div>
+
+          <p>
+            The simplest way to chunk is to count words: every N words, start a new chunk. It is fast, but it doesn't know where a sentence ends. If the answer sentence sits on a boundary, half of it lands in one chunk and half in the next, and neither chunk can answer the question. Overlap helps: each chunk repeats the last few words of the one before it.
+          </p>
+          <p>
+            Move the size and overlap sliders, or edit the Python directly. The two stay in sync. Each chunk is drawn as a block, and the answer sentence is underlined, so you can see whether it stays in one piece.
+          </p>
+
+          <div class="widget" data-widget="fixed-chunks">
+            <div class="activity-loading" role="status">
+              <div class="spinner" aria-hidden="true"></div>
+              <p>This activity is loading.</p>
+            </div>
+          </div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s3" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s2">← Previous</button>
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s4">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s4" data-minutes="8" data-title="Smarter splits">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">4. Smarter <span class="kw">splits</span></h2>
+            <span class="section-badge">8 min</span>
+          </div>
+
+          <p>
+            Counting words cuts wherever the count runs out, often in the middle of a sentence. A recursive splitter follows the shape of the text instead. It first splits on blank lines (paragraphs). Any piece that is still too long is split on line breaks, then on sentence ends, and only as a last resort on single words.
+          </p>
+          <p>
+            Change <code>max_words</code> and watch the call tree below. Each box is one call of the function and shows the separators it still has left. Click a box to see the start of the text that call received.
+          </p>
+
+          <div class="widget" data-widget="recursive-tree">
+            <div class="activity-loading" role="status">
+              <div class="spinner" aria-hidden="true"></div>
+              <p>This activity is loading.</p>
+            </div>
+          </div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s4" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s3">← Previous</button>
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s5">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s5" data-minutes="10" data-title="Game: Rescue the Answer">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">5. Game: Rescue the <span class="kw">Answer</span></h2>
+            <span class="section-badge">10 min</span>
+          </div>
+
+          <p>
+            Time to use what you've learned. Three customer questions need answers from the help centre, and your chunks decide whether search can find them.
+          </p>
+          <p>
+            Pick a strategy, a size and an overlap. A question is <strong>rescued</strong> when keyword search puts the whole answer sentence in its top chunk, and that chunk is 60 words or fewer. Level 1 gives you fixed-size chunks only. Level 2 opens all three strategies and asks you to send as few words as you can.
+          </p>
+
+          <div class="widget" data-widget="rescue-game">
+            <div class="activity-loading" role="status">
+              <div class="spinner" aria-hidden="true"></div>
+              <p>This activity is loading.</p>
+            </div>
+          </div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s5" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s4">← Previous</button>
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s6">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s6" data-minutes="4" data-title="Chunking in real apps">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">6. Chunking in <span class="kw">real apps</span></h2>
+            <span class="section-badge">4 min</span>
+          </div>
+
+          <p>
+            Where does chunking sit in a real RAG app? Right after cleaning and before indexing. Every later step, from search to the final answer, works with your chunks. If the chunks are broken, every later step works with broken pieces.
+          </p>
+
+          <div class="pipeline-container" aria-label="Production RAG pipeline diagram">
+            <div class="pipeline-step">1. Document</div>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <div class="pipeline-step">2. Clean</div>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <div class="pipeline-step highlight">3. Chunk</div>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <div class="pipeline-step">4. Index</div>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <div class="pipeline-step">5. Retrieve</div>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <div class="pipeline-step">6. Answer with LLM</div>
+          </div>
+
+          <h3 style="margin-top: 32px;">Starting Settings by Document Type</h3>
+          <p>
+            No single chunk size fits every document. These are sensible places to start. Test them on your own documents before you trust them:
+          </p>
+
+          <div class="table-responsive">
+            <table class="settings-table">
+              <thead>
+                <tr>
+                  <th scope="col">Document Type</th>
+                  <th scope="col">Recommended Split</th>
+                  <th scope="col">Why this works</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Customer Support FAQs</strong></td>
+                  <td>By section or 100–300 words</td>
+                  <td>Each Q&amp;A pair is self-contained. Splitting mid-answer destroys the solution.</td>
+                </tr>
+                <tr>
+                  <td><strong>Legal Contracts</strong></td>
+                  <td>By clause with generous overlap</td>
+                  <td>Clauses frequently reference definitions elsewhere; overlap carries context.</td>
+                </tr>
+                <tr>
+                  <td><strong>Source Code</strong></td>
+                  <td>By function or class (never mid-function)</td>
+                  <td>Cutting inside a function breaks syntax trees and program execution context.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-red" style="margin: 28px 0;">
+            <h4>The Core Metric</h4>
+            <p>
+              <strong>Always check:</strong> does the top chunk contain the whole answer? If the answer is cut in half, even a strong model has to guess, and a guess can sound right while being wrong.
+            </p>
+          </div>
+
+          <div class="token-callout">
+            <strong>A note on tokens:</strong> Production models count tokens rather than words. For English text, a dependable rule of thumb is that <strong>1 token ≈ 0.75 words</strong> (or 100 words is approximately 133 tokens). Always convert your word targets into token limits when configuring vector databases.
+          </div>
+
+          <div class="question-block callout-amber" id="s6-prove-block">
+            <div class="question-prompt">
+              <strong>Prove:</strong> If your top retrieved chunk contains 80% of an answer sentence, is retrieval successful?
+            </div>
+            <div class="choices-row" role="radiogroup" aria-label="Section 6 prove options">
+              <button type="button" class="choice-btn" data-s6-choice="yes">
+                Yes: 80% gives the model enough clues to guess the rest.
+              </button>
+              <button type="button" class="choice-btn" data-s6-choice="no">
+                No: missing 20% can omit critical conditions and trigger hallucinations.
+              </button>
+            </div>
+            <div id="s6-feedback" class="feedback-alert" role="alert" aria-live="polite"></div>
+          </div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s6" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s5">← Previous</button>
+                <button type="button" class="btn btn-purple btn-nav-next" data-target="s7">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="s7" data-minutes="6" data-title="Knowledge check">
+        <div class="slide-body">
+          <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">7. Knowledge <span class="kw">check</span></h2>
+            <span class="section-badge">6 min</span>
+          </div>
+
+          <p>
+            You've seen why text is chunked, how to clean a messy document, how fixed and recursive splitters work, and how to choose settings for search.
+          </p>
+          <p>
+            Answer the six questions below. Each one gets a single try. When you finish, you'll see your score and a recap of the lesson.
+          </p>
+
+          <div id="quiz-mount"></div>
+
+          <div class="section-footer-nav">
+            <div class="footer-nav-controls">
+              <button type="button" class="btn btn-mark-later" data-mark-section="s7" aria-pressed="false">
+                <span class="pentagon-icon" aria-hidden="true"></span>
+                <span class="mark-label">Mark for later</span>
+              </button>
+              <div class="footer-nav-actions">
+                <button type="button" class="btn btn-purple btn-nav-prev" data-target="s6">← Previous</button>
+                <a href="#before-start" class="btn btn-purple btn-nav-top">Back to top ↑</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="slides-controller" role="toolbar" aria-label="Slide presentation navigation">
+    <button type="button" class="btn btn-purple" id="btn-slide-prev" aria-label="Previous slide">
+      ← Previous
+    </button>
+    <div class="slide-counter" id="slide-counter" aria-live="polite">1 / 7</div>
+    <button type="button" class="btn btn-purple" id="btn-slide-next" aria-label="Next slide">
+      Next →
+    </button>
+  </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>Built by V. Srinivasulu Reddy for the Kalvium Instructional Designer (AI Courses) task.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install pytest
+
+      - name: Run Python lesson code tests
+        run: |
+          python3 -m pytest -q
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate JSON files
+        run: |
+          python3 -m json.tool data/questions.json > /dev/null
+
+      - name: Check JavaScript syntax
+        run: |
+          for f in js/*.js js/widgets/*.js; do
+            if [ -f "$f" ]; then
+              echo "Checking syntax: $f"
+              node --check "$f"
+            fi
+          done
+
+      - name: Test Local Server
+        run: |
+          python3 -m http.server 8501 &
+          SERVER_PID=$!
+          sleep 2
+          curl -f http://localhost:8501/index.html > /dev/null
+          curl -f http://localhost:8501/data/help-centre.txt > /dev/null
+          kill $SERVER_PID

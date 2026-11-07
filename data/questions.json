@@ -1,0 +1,17 @@
+[
+  {
+    "id": "q1",
+    "question": "How long do I have to return a damaged item?",
+    "answer": "Damaged items can be returned within 60 days if you upload a photo of the damage."
+  },
+  {
+    "id": "q2",
+    "question": "How long does a refund take to reach my payment method?",
+    "answer": "Refunds go back to the original payment method within seven working days of the return being approved."
+  },
+  {
+    "id": "q3",
+    "question": "Can I return a gift card?",
+    "answer": "Gift cards and downloadable products cannot be returned or refunded."
+  }
+]
